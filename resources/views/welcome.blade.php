@@ -3,8 +3,8 @@
 
 
 @section('content')
-    hola
-    
+    BIENVENIDO
+    <br /><br /><br /><br /><br />
 @endsection
 @section('scripts')
     

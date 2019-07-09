@@ -56,6 +56,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url('/sale') }}">VENTAS</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('/informes') }}">INFORMES</a>
+                        </li>
                            
                     </ul>
                 </div>

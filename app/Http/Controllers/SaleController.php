@@ -117,6 +117,7 @@ class SaleController extends Controller
        
         $sale = Sale::find($id);
         $sale->update($input);
+        DB::table('sale_details')->where('sale_id', $id)->delete();
         if( $input['detalles']){
             foreach($input['detalles'] as $deta){
                 $detalle = [

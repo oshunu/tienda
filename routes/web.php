@@ -21,3 +21,6 @@ Route::resource('sale', 'SaleController');
 
 Route::get('api/product/{id}', 'ApiController@product');
 Route::get('api/product', 'ApiController@index');
+
+Route::get('informes', 'InformesController@index');
+Route::get('informes/buscar', 'InformesController@buscar');

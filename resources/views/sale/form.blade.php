@@ -51,7 +51,7 @@ use App\Product;
                             <input type="text" name="total" id="add_total" class="form-control" v-model="add.total" readonly    >
                         </div>
                         <div class="col-sm-2 text-right ">
-                        <button type="button" class="btn btn-primary" v-on:click="detalleAdd()">ADD</button>
+                            <button type="button" class="btn btn-primary" v-on:click="detalleAdd()">ADD</button>
                         </div>
                     </div>
                     <div class="row mt-3">
