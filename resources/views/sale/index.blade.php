@@ -120,6 +120,7 @@
                     var url = urlIndex +  '/' + id + '/edit';
                     axios.get(url).then(response => {                       
                         this.row = response.data;
+                        this.detalleCalcular();
                     });    
                     $('#ventaModal').modal('show');
                 },
@@ -157,6 +158,7 @@
                     }
                 },
                 detalleAdd: function(){ 
+                    
                     if(this.add.product_id == ''){
                         alert('seleccione un producto');
                         return false;
@@ -169,9 +171,19 @@
                         alert('digite un valor unitario');
                         return false;
                     }
+                    this.add.product_nombre  =  $( "#add_producto_id option:selected" ).text();
+                    
+
                     this.add.total = eval(this.add.cantidad) * eval(this.add.valor_unitario);
                     this.row.detalles.push(this.add);
                     this.detalleCalcular();
+                    if( this.row.detalles.length > 5){
+                        alert('se aplica descuento')
+                        var descuento  = eval(this.row.total)* eval(0.1);
+                        alert(descuento)
+                    }
+                    this.add = [];
+
                 },
                 detalleEliminar: function(index){                    
                     this.row.detalles.splice(index, 1);

@@ -39,7 +39,7 @@ use App\Product;
                                 <?php 
                                 $items_product = Product::pluck('nombre', 'id');
                                 ?>                               
-                                {!! Form::select('product_id', $items_product, null, ['class' => 'form-control',' v-model'=>'add.product_id']) !!}
+                                {!! Form::select('product_id', $items_product, null, ['id' => 'add_producto_id','class' => 'form-control',' v-model'=>'add.product_id']) !!}
                         </div>
                         <div class="col-sm-2 ">
                             <input type="number" name="cantidad" id="add_cantidad" class="form-control" v-model="add.cantidad" placeholder="Cantidad" >
@@ -73,7 +73,7 @@ use App\Product;
                             </thead>
                             <tbody>
                                 <tr v-for="item in row.detalles">
-                                    <th scope="row">@{{ item.product_id }}</th>
+                                    <th scope="row">@{{ item.product_nombre }}</th>
                                     <td>@{{ item.cantidad }}</td>
                                     <td>@{{ item.valor_unitario }}</td>
                                     <td>@{{ item.total }}</td>

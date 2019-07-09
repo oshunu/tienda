@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Sale;
 use App\SaleDetail;
+use App\Product;
 
 class SaleController extends Controller
 {
@@ -96,6 +97,11 @@ class SaleController extends Controller
     {
         $producto = Sale::findOrFail($id);
         $detalles = $user = DB::table('sale_details')->where('sale_id', $id)->get();
+        foreach($detalles as $i => $data){
+            $producto = Product::findOrFail($data->product_id);
+            
+            $detalles[$i]->product_nombre = $producto->nombre;
+        }
         $producto['detalles']=  $detalles;
         return $producto;
     }
