@@ -18,15 +18,15 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Nombre venta</th>
-                <th>Precio Unitario</th>
-                <th>Stock</th>
-                <th> - </th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Total</th>
+                <th > - </th>
             </tr>
         </thead>
     </table>         
     <form method="POST" id="ventaForm" v-on:submit.prevent="guardar">
-        @include('product/form') 
+        @include('sale/form') 
     </form>
     <form id="form_destroy" action="#" method="POST">
         @method('DELETE')
@@ -41,16 +41,16 @@
     var dataTabla = '';
     $(document).ready(function() {
        
-        urlIndex = "{{ route('product.index') }}";
+        urlIndex = "{{ route('sale.index') }}";
         dataTabla = $('#venta-table').DataTable({                
             "serverSide": true,
             "ajax": urlIndex,
             "columns":[
                 {data:'id'},
-                {data:'nombre'},
-                {data:'valor_unitario'},
-                {data:'stock'},    
-                {data:'btn', width: "120px", className: 'text-center'},
+                {data:'fecha'},
+                {data:'customer_id'},
+                {data:'total'},    
+                {data:'btn', width: "120px", className: 'text-right'},
             ],
             "bLengthChange": false,
             language: {
@@ -72,25 +72,40 @@
                 }
             });
             
-        
+        $( "#add_cantidad, #add_valor_unitario" ).keyup(function() {
+            var cantidad = $('#add_cantidad').val();
+            var valor_unitario = $('#add_valor_unitario').val();
+            
+            $('#add_total').val(eval(cantidad) * eval(valor_unitario));
+        });
     });
 
-    const appventa = new Vue({
+    const appSales = new Vue({
             el: "#appSales",
             created: function(){
               //  this.deleteCliente();
             },
-            data: {                
-                row:{},
+            data: {       
+                add:{
+                    product_id:'',
+                    valor_unitario:'',
+                    cantidad:'',
+                    total:'',
+                    
+                } ,       
+                row:{
+                    detalles:[]
+                },
                 accion:'',               
             },
             methods: {
                 formReset: function(){
                     this.row = { 
                         id: "", 
-                        nombre: "", 
-                        valor_unitario: "",                        
-                        stock: "",
+                        fecha: "", 
+                        customer_id: "",                        
+                        total: 0,
+                        detalles:[]
                     };
                 },
                 btnNuevo: function(){                        
@@ -140,6 +155,34 @@
                     }else{
                         $('#ventaModal').modal('hide');
                     }
+                },
+                detalleAdd: function(){ 
+                    if(this.add.product_id == ''){
+                        alert('seleccione un producto');
+                        return false;
+                    }
+                    if(this.add.cantidad == ''){
+                        alert('digite una cantidad');
+                        return false;
+                    }
+                    if(this.add.valor_unitario == ''){
+                        alert('digite un valor unitario');
+                        return false;
+                    }
+                    this.add.total = eval(this.add.cantidad) * eval(this.add.valor_unitario);
+                    this.row.detalles.push(this.add);
+                    this.detalleCalcular();
+                },
+                detalleEliminar: function(index){                    
+                    this.row.detalles.splice(index, 1);
+                    this.detalleCalcular()
+                },
+                detalleCalcular: function(){
+                    var total2 =0;
+                    $.each(this.row.detalles, function(key, value) {
+                        total2 = eval(total2) + eval(value.total);
+                    });
+                    this.row.total = total2;
                 }
             }
         });

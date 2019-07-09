@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 use App\Sale;
+use App\SaleDetail;
 
 class SaleController extends Controller
 {
@@ -20,13 +22,16 @@ class SaleController extends Controller
             return datatables()->eloquent($data)
                 ->addColumn('btn', function ($sale) {
                     return view('helpers.tablaBotonesVue', ['obj' => 'appSales', 'id' => $sale->id])->render();
+                })
+                ->addColumn('customer_id', function ($sale) {
+                    return $sale->cliente->nombres;
                 })               
                
-                ->rawColumns(['btn'])
+                ->rawColumns(['btn','customer_id'])
                 ->toJson();
         }
        
-        return view('product.index');
+        return view('sale.index');
     }
 
     /**
@@ -48,13 +53,26 @@ class SaleController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'nombre' => 'required',
-            'valor_unitario' => 'required'
+            'fecha' => 'required',
+            'customer_id' => 'required'
         ]);
         $input = $request->all();
         
-        $res = Sale::create($input);
-        return response()->json($res);
+        $sale = Sale::create($input);
+        if( $input['detalles']){
+            foreach($input['detalles'] as $deta){
+                $detalle = [
+                    'sale_id' => $sale->id,
+                    'product_id' => $deta['product_id'],
+                    'cantidad' => $deta['cantidad'],
+                    'valor_unitario' => $deta['valor_unitario'],
+                    'total' => $deta['total'],
+                    
+                ];
+                $res = SaleDetail::create($detalle);
+            }
+        }
+        return response()->json($sale);
     }
 
     /**
@@ -77,6 +95,8 @@ class SaleController extends Controller
     public function edit($id)
     {
         $producto = Sale::findOrFail($id);
+        $detalles = $user = DB::table('sale_details')->where('sale_id', $id)->get();
+        $producto['detalles']=  $detalles;
         return $producto;
     }
 
@@ -95,10 +115,23 @@ class SaleController extends Controller
         ]);
         $input = $request->all();
        
-        $producto = Sale::find($id);
-        $producto->update($input);
+        $sale = Sale::find($id);
+        $sale->update($input);
+        if( $input['detalles']){
+            foreach($input['detalles'] as $deta){
+                $detalle = [
+                    'sale_id' => $sale->id,
+                    'product_id' => $deta['product_id'],
+                    'cantidad' => $deta['cantidad'],
+                    'valor_unitario' => $deta['valor_unitario'],
+                    'total' => $deta['total'],
+                    
+                ];
+                $res = SaleDetail::create($detalle);
+            }
+        }
         
-        return response()->json($producto);
+        return response()->json($sale);
     }
 
     /**
@@ -109,7 +142,12 @@ class SaleController extends Controller
      */
     public function destroy($id)
     {
-        $producto = Sale::findOrFail($id);
-        $producto->delete();
+       
+
+        DB::table('sale_details')->where('sale_id', $id)->delete();
+
+        $sale = Sale::findOrFail($id);
+        $sale->delete();
+
     }
 }

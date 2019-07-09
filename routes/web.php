@@ -18,3 +18,6 @@ Route::get('/', function () {
 Route::resource('product', 'ProductController');
 Route::resource('customer', 'CustomerController');
 Route::resource('sale', 'SaleController');
+
+Route::get('api/product/{id}', 'ApiController@product');
+Route::get('api/product', 'ApiController@index');
